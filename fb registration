@@ -1,0 +1,43 @@
+# fb_register.py
+import requests
+
+PAGE_ID      = "page id"
+VERIFY_TOKEN = "verification token"
+APP_ID = "app id"
+APP_SECRET = "app secret"
+APP_ACCESS_TOKEN = f"{APP_ID}|{APP_SECRET}"
+
+def get_app_access_token():
+    url = f"https://graph.facebook.com/oauth/access_token"
+    params = {
+        "client_id": APP_ID,
+        "client_secret": APP_SECRET,
+        "grant_type": "client_credentials"
+    }
+    resp = requests.get(url, params=params)
+    data = resp.json()
+    return data.get("access_token")
+
+def register_webhook(callback_url_, app_access_token_):
+    url = f"https://graph.facebook.com/v19.0/{APP_ID}/subscriptions"
+    params = {"access_token": app_access_token_}
+    data = {
+        "object": "page",
+        "callback_url": callback_url_,
+        "verify_token": VERIFY_TOKEN,
+        "fields": "messages,messaging_postbacks",
+        "include_values": "true"
+    }
+    resp = requests.post(url, params=params, data=data)
+    print(f"Facebook webhook registration response: {resp.status_code} {resp.text}")
+
+if __name__ == "__main__":
+    with open("current_url.txt", "r") as l:
+         tunnel_url = l.readlines()[0].strip()
+    callback_url = tunnel_url.rstrip('/') + "/webhook"
+
+    app_access_token = get_app_access_token()
+    if not app_access_token:
+        print("Failed to get app access token. Check APP_ID and APP_SECRET.")
+    else:
+        register_webhook(callback_url, app_access_token)
