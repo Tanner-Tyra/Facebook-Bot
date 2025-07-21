@@ -5,3 +5,7 @@ Waitress
 cloudflarify
 
 requests
+
+ttkbootstrap
+
+sqlalchemy
