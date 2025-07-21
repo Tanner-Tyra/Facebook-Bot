@@ -1,11 +1,12 @@
 # fb_register.py
 import requests
-
-PAGE_ID      = "page id"
-VERIFY_TOKEN = "verification token"
-APP_ID = "app id"
-APP_SECRET = "app secret"
-APP_ACCESS_TOKEN = f"{APP_ID}|{APP_SECRET}"
+with open("Facebook_stuff.txt", "r") as l:
+    key = l.readlines()
+    PAGE_ID      = key[5]
+    VERIFY_TOKEN = key[0]
+    APP_ID = key[4]
+    APP_SECRET = key[3]
+    APP_ACCESS_TOKEN = f"{APP_ID}|{APP_SECRET}"
 
 def get_app_access_token():
     url = f"https://graph.facebook.com/oauth/access_token"
